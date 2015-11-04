@@ -13,16 +13,18 @@ import android.widget.TimePicker;
 import android.widget.Toast;
 
 import java.text.DecimalFormat;
-import java.text.NumberFormat;
+
+import Finance.Currency;
+import Finance.Money;
+import Finance.Salary;
+import SimpleTime.Time;
 
 public class MainActivity extends AppCompatActivity {
 
     EditText txtSalary;
-    Button btnStartTime;
-    Button btnEndTime;
-    TextView lblStartTime;
-    TextView lblEndTime;
-    TextView lblSalary;
+    Button btnStartTime, btnEndTime;
+    TextView lblStartTime, lblEndTime, lblSalary, lblWorkTime, lblSalaryCurrency;
+    Currency currency = Currency.ILS;
 
     Time startTime;
     Time endTime;
@@ -38,42 +40,57 @@ public class MainActivity extends AppCompatActivity {
         lblStartTime = (TextView) findViewById(R.id.lblStartTime);
         lblEndTime = (TextView) findViewById(R.id.lblEndTime);
         lblSalary = (TextView) findViewById(R.id.lblSalary);
+        lblWorkTime = (TextView) findViewById(R.id.lblWorkTime);
 
-        startTime = new Time();
-        endTime = new Time();
-
+        lblSalaryCurrency = (TextView) findViewById(R.id.lblSalaryCurrency);
+        lblSalaryCurrency.setText(currency.toString());
 
     }
 
-
     public void btnChooseStartTime(View view) {
         TimePickerFragment newFragment = new TimePickerFragment();
-        newFragment.setFragment(startTime.getHour(), startTime.getMinute(), new TimePickerFragment.onTimeChosenListener() {
+        if (startTime == null){
+            startTime = new Time();
+        }
+        newFragment.setFragment(startTime.getHour(), startTime.getMinutes(), new TimePickerFragment.onTimeChosenListener() {
             @Override
             public void setTime(int hour, int minute) {
-                NumberFormat formatter = new DecimalFormat("00");
-                lblStartTime.setText(formatter.format(hour) + ":" + formatter.format(minute));
-                startTime.hour = hour;
-                startTime.minute = minute;
+                startTime.setHour(hour);
+                startTime.setMinutes(minute);
+                lblStartTime.setText(startTime.toString());
                 clearSalary();
+
+                if (endTime != null){
+                    showHoursWorked();
+                }
             }
         });
         newFragment.show(getFragmentManager(), "timePicker");
     }
 
     public void btnChooseEndTime(View view) {
+        if (endTime == null){
+            endTime = new Time();
+        }
         TimePickerFragment newFragment = new TimePickerFragment();
-        newFragment.setFragment(endTime.getHour(), endTime.getMinute(),new TimePickerFragment.onTimeChosenListener() {
+        newFragment.setFragment(endTime.getHour(), endTime.getMinutes(), new TimePickerFragment.onTimeChosenListener() {
             @Override
             public void setTime(int hour, int minute) {
-                NumberFormat formatter = new DecimalFormat("00");
-                lblEndTime.setText(formatter.format(hour) + ":" + formatter.format(minute));
-                endTime.hour = hour;
-                endTime.minute = minute;
+                endTime.setHour(hour);
+                endTime.setMinutes(minute);
+                lblEndTime.setText(endTime.toString());
                 clearSalary();
+
+                if (startTime != null){
+                    showHoursWorked();
+                }
             }
         });
         newFragment.show(getFragmentManager(), "timePicker");
+    }
+
+    private void showHoursWorked(){
+        lblWorkTime.setText(startTime.timeDifference(endTime).toString());
     }
 
     private void clearSalary(){
@@ -81,35 +98,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void btnCalculateSalary(View view) {
-        if (lblStartTime.getText().toString().equals("") || lblEndTime.getText().toString().equals("")) {
+        if (startTime == null || endTime == null) {
             Toast.makeText(MainActivity.this, "נא להכניס שעת התחלה וסיום", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        int startHour = startTime.getHour();
-        int endHour = endTime.getHour();
-
-        int hourDifference;
-        if (startHour <= endHour){
-            hourDifference = endHour - startHour;
-        } else {
-            hourDifference = (24 - startHour) + endHour;
-        }
-
-        int startMinute = startTime.getMinute();
-        int endMinute = endTime.getMinute();
-
-        int minuteDifference;
-        if (startMinute <= endMinute){
-            minuteDifference = endMinute - startMinute;
-        } else {
-            minuteDifference = (60 - startMinute) + endMinute;
-            hourDifference--;
-        }
-
-        double minutesInHours = minuteDifference * (1.0/60);
-        double hoursWorked = hourDifference + minutesInHours;
-
+        Time timeWorked = startTime.timeDifference(endTime);
         double salaryPerHour;
         try {
             salaryPerHour = getSalaryPerHour();
@@ -118,10 +112,9 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
 
-        DecimalFormat df = new DecimalFormat("####0.00");
-        String salary = df.format(salaryPerHour * hoursWorked) + "₪";
+        Salary salary = new Salary(new Money(salaryPerHour, Currency.ILS), timeWorked, null, null);
 
-        lblSalary.setText(salary);
+        lblSalary.setText(salary.getFinalPay().toString());
     }
 
     private double getSalaryPerHour() throws Exception{
@@ -164,24 +157,5 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    class Time{
-        private int hour = 0;
-        private int minute = 0;
 
-        public int getHour() {
-            return hour;
-        }
-
-        public void setHour(int hour) {
-            this.hour = hour;
-        }
-
-        public int getMinute() {
-            return minute;
-        }
-
-        public void setMinute(int minute) {
-            this.minute = minute;
-        }
-    }
 }
