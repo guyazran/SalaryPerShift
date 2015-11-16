@@ -4,10 +4,47 @@
     <string name="action_settings">הגדרות</string>
     <string name="calculate_salary">חשב משכורת</string>
     <string name="end_hour">שעת סיום</string>
-    <string name="end_hour_label">והסתיימה בשעה</string>
+    <string name="end_hour_label">סיום משמרת</string>
     <string name="final_salary_label">המשכורת הסופית היא</string>
-    <string name="hours_worked_label">שעות עבודה:</string>
+    <string name="hours_worked_label">שעות עבודה</string>
     <string name="salary_per_hour_label">משכורת לשעה:</string>
     <string name="start_hour">שעת התחלה</string>
-    <string name="start_hour_label">המשמרת התחילה בשעה</string>
+    <string name="start_hour_label">תחילת משמרת</string>
+    <string name="enter_start_and_end_hour_toast">נא להכניס שעת התחלה וסיום</string>
+    <string name="invalid_salary_input_toast">משכורת לא תקינה</string>
+    <string name="title_activity_calculate_salary">חשב משכורת</string>
+    <string name="select_currency_label">מטבע</string>
+    <string name="title_activity_settings">הגדרות</string>
+    <string name="add_overtime_checkbox">שעות נוספות</string>
+    <string name="end_overtime_button">סוף שעות נוספות</string>
+    <string name="end_overtime_label">סוף שעות</string>
+    <string name="overall_time_worked_label">סך כל זמן העבודה</string>
+    <string name="overtime_rate_label">משכורת מוגברת לשעה</string>
+    <string name="overtime_worked_label">שעות נוספות</string>
+    <string name="start_overtime_button">תחילת שעות נוספות</string>
+    <string name="start_overtime_label">תחילת שעות</string>
+    <string name="select_overall_time_display_format_label">פומט תצוגת סכום זמנים</string>
+    <string name="add_timer_dialog_title">הוסף טיימר</string>
+    <string name="cancel">ביטול</string>
+    <string name="choose_overtime_start_button">בחר התחלת שעות נוספות</string>
+    <string name="choose_start_time_button">בחר שעת התחלה</string>
+    <string name="earlier_start_time_label">זמן התחלה מוקדם</string>
+    <string name="employee_name_hint">שם העובד</string>
+    <string name="invalid_timer_start_time_toast">נא לבחור שעה המוקדמת מהשעה הנוכחית</string>
+    <string name="overtime_start_label">תחילת שעות נוספות</string>
+    <string name="salary_label">משכורת</string>
+    <string name="stop_button">עצור</string>
+    <string name="time_worked_label">זמן עבודה</string>
+    <string name="use_current_hour_as_start_time">השתמש בשעה הנוכחית כשעת התחלה</string>
+    <string name="still_in_shift_button">עדיין במשמרת</string>
+    <string name="invalid_overtime_salary_input_toast">משכורת שעות נוספות לא תקינה</string>
+    <string name="invalid_timer_overtime_start_time_toast">נא לבחור שעת התחלה לשעות נוספות המאוחרת משעת ההתחלה של הטיימר</string>
+    <string name="enter_overtime_start_and_end_hour">נא להכניס שעת התחלה וסיום לשעות הנוספות</string>
+
+    <array name="overall_time_display_formats">
+
+        <item>שעון (6:30)</item>
+        <item>עשרוני (6.5)</item>
+
+    </array>
 </resources>
