@@ -15,6 +15,7 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -39,6 +40,8 @@ public class SimpleCalculateSalaryFragment extends Fragment {
 
     private OnFragmentInteractionListener mListener;
 
+    private ScrollView scrollView;
+
     private EditText txtSalary;
     private Button btnStartTime, btnEndTime, btnCalculateSalary;
     private CheckBox chkAddOvertime;
@@ -56,11 +59,14 @@ public class SimpleCalculateSalaryFragment extends Fragment {
 
         View view = inflater.inflate(R.layout.fragment_simple_calculate_salary, container, false);
 
+        //get reference to main scrollview
+        scrollView = (ScrollView) view.findViewById(R.id.simpleCalculateSalaryContainerScrollView);
+
         txtSalary = (EditText) view.findViewById(R.id.txtSalary);
         txtSalary.setOnKeyListener(new View.OnKeyListener() {
             @Override
             public boolean onKey(View v, int keyCode, KeyEvent event) {
-                if (keyCode == KeyEvent.KEYCODE_ENTER) {
+                if (keyCode == KeyEvent.KEYCODE_ENTER && !chkAddOvertime.isChecked()) {
                     btnCalculateSalary(btnCalculateSalary);
                 }
                 return false;
@@ -266,15 +272,18 @@ public class SimpleCalculateSalaryFragment extends Fragment {
             }
             if (overtimeSalary == null) {
                 Toast.makeText(getActivity(), R.string.invalid_overtime_salary_input_toast, Toast.LENGTH_LONG).show();
+                return;
             }
         }
-
-        InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
 
         Salary salary = new Salary(new Money(salaryPerHour, Currency.ILS), timeWorked, overtimeSalary, overtimeWorked);
 
         lblSalary.setText(salary.getFinalPay().toString());
+
+        //scroll down to bottom and hide keyboard
+        InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(getView().getWindowToken(), 0);
+        scrollView.fullScroll(View.FOCUS_DOWN);
     }
 
     private double getSalaryPerHour() {

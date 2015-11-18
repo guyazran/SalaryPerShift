@@ -16,6 +16,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.ScrollView;
 
 import com.guyazran.Finance.Money;
 
@@ -153,7 +154,10 @@ public class CalculateSalaryActivity extends AppCompatActivity implements Simple
         FragmentManager manager = getSupportFragmentManager();
         AddOvertimeFragment addOvertimeFragment = (AddOvertimeFragment) manager.findFragmentByTag(SimpleCalculateSalaryFragment.ADD_OVERTIME_FRAGMENT);
         if (addOvertimeFragment != null) {
-            return new OverflowClock(addOvertimeFragment.getOverTimeWorked());
+            OverflowClock overtimeWorked = addOvertimeFragment.getOverTimeWorked();
+            if (overtimeWorked != null) {
+                return overtimeWorked;
+            }
         }
         return null;
     }
