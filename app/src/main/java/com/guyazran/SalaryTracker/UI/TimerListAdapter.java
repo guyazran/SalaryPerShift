@@ -110,7 +110,7 @@ public class TimerListAdapter extends RecyclerView.Adapter<TimerListAdapter.View
                 holder.lblTimerWorked.setText(overallTimeWorked.toString());
             } else {
                 DecimalFormat df = new DecimalFormat("####0.00");
-                holder.lblTimerWorked.setText(df.format(overallTimeWorked.getDecimalValue()));
+                holder.lblTimerWorked.setText(df.format(overallTimeWorked.getDecimalValue()) + " " + context.getString(R.string.hour_unit_symbol));
             }
 
             workTimer.getSalary().setTimeWorked(workTimer.getTimePassed());

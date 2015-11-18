@@ -39,12 +39,13 @@
     <string name="still_in_shift_button">עדיין במשמרת</string>
     <string name="invalid_overtime_salary_input_toast">משכורת שעות נוספות לא תקינה</string>
     <string name="invalid_timer_overtime_start_time_toast">נא לבחור שעת התחלה לשעות נוספות המאוחרת משעת ההתחלה של הטיימר</string>
-    <string name="enter_overtime_start_and_end_hour">נא להכניס שעת התחלה וסיום לשעות הנוספות</string>
+    <string name="enter_overtime_stרart_and_end_hour">נא להכניס שעת התחלה וסיום לשעות הנוספות</string>
 
     <array name="overall_time_display_formats">
 
-        <item>שעון (6:30)</item>
-        <item>עשרוני (6.5)</item>
+        <item>שעון (06:30)</item>
+        <item>עשרוני (6.5 ש\')</item>
 
     </array>
+    <string name="hour_unit_symbol">ש\'</string>
 </resources>

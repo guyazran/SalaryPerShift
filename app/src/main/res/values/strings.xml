@@ -43,8 +43,8 @@
 
     <array name="overall_time_display_formats">
 
-        <item>Clock (6:30)</item>
-        <item>Decimal (6.5)</item>
+        <item>Clock (06:30)</item>
+        <item>Decimal (6.5 h)</item>
 
     </array>
     <string name="invalid_timer_start_time_toast">Please choose a time that is earlier than the current time</string>
@@ -60,4 +60,5 @@
     <string name="invalid_overtime_salary_input_toast">Invalid overtime salary</string>
     <string name="invalid_timer_overtime_start_time_toast">Please choose an overtime start time that is later than the start time</string>
     <string name="enter_overtime_start_and_end_hour">Please enter the overtime starting time and a finishing time</string>
+    <string name="hour_unit_symbol">h</string>
 </resources>

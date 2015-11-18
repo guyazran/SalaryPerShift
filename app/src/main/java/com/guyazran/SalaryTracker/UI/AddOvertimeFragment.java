@@ -212,7 +212,7 @@ public class AddOvertimeFragment extends Fragment {
                 lblOverallTimeWorked.setText(overallTimeWorked.toString());
             } else {
                 DecimalFormat df = new DecimalFormat("####0.00");
-                lblOverallTimeWorked.setText(df.format(overallTimeWorked.getDecimalValue()));
+                lblOverallTimeWorked.setText(df.format(overallTimeWorked.getDecimalValue()) + " " + getString(R.string.hour_unit_symbol));
             }
         }
     }
