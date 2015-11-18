@@ -206,8 +206,14 @@ public class AddOvertimeFragment extends Fragment {
 
     private void setOverallTimeWorked() {
         if (regularTimeWorked != null && startTime != null && endTime != null) {
-            Clock overallTimeWorked = TimeMath.addTimes(regularTimeWorked, startTime.hourAndMinutesDifference(endTime));
-            lblOverallTimeWorked.setText(overallTimeWorked.toString());
+            OverflowClock overallTimeWorked = TimeMath.addTimes(regularTimeWorked, startTime.hourAndMinutesDifference(endTime));
+
+            if (sharedPreferences.getInt(SettingsActivity.PREFERRED_OVERALL_TIME_DISPLAY_FORMAT, 0) == 0) {
+                lblOverallTimeWorked.setText(overallTimeWorked.toString());
+            } else {
+                DecimalFormat df = new DecimalFormat("####0.00");
+                lblOverallTimeWorked.setText(df.format(overallTimeWorked.getDecimalValue()));
+            }
         }
     }
 
