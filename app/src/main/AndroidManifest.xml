@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.guyazran.salarypershift" >
+    package="com.guyazran.SalaryTracker" >
 
     <application
         android:allowBackup="true"
@@ -10,7 +10,7 @@
         android:theme="@style/AppTheme">
         <activity
             android:name=".UI.CalculateSalaryActivity"
-            android:label="@string/title_activity_calculate_salary"
+            android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar"
             android:screenOrientation="portrait">
             <intent-filter>

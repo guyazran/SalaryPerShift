@@ -1,4 +1,4 @@
-package com.guyazran.salarypershift.UI;
+package com.guyazran.SalaryTracker.UI;
 
 import android.content.SharedPreferences;
 import android.support.v7.app.ActionBar;
@@ -10,7 +10,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 
-import com.guyazran.salarypershift.R;
+import com.guyazran.SalaryTracker.R;
 
 import com.guyazran.Finance.Currency;
 
@@ -29,7 +29,7 @@ public class SettingsActivity extends AppCompatActivity {
     public static final int EUR = 1;
     public static final int ILS = 2;
 
-
+    public static boolean currencyChanged = false;
     SharedPreferences sharedPreferences;
 
     Spinner spnSelectCurrency;
@@ -68,6 +68,8 @@ public class SettingsActivity extends AppCompatActivity {
                 SharedPreferences.Editor editor = sharedPreferences.edit();
                 editor.putInt(PREFERRED_CURRENCY, position);
                 editor.commit();
+
+                currencyChanged = true;
 
                 setResult(RESULT_OK);
             }
@@ -108,4 +110,7 @@ public class SettingsActivity extends AppCompatActivity {
         finish();
     }
 
+    public interface OnCurrencyChangedListener{
+        void onCurrencyChanged(Currency newCurrency);
+    }
 }

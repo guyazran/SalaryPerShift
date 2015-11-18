@@ -1,5 +1,6 @@
-package com.guyazran.salarypershift.UI;
+package com.guyazran.SalaryTracker.UI;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Color;
@@ -16,10 +17,10 @@ import java.util.ArrayList;
 
 import com.guyazran.SimpleTime.TimeMath;
 import com.guyazran.SimpleTime.TimerState;
-import com.guyazran.salarypershift.R;
+import com.guyazran.SalaryTracker.R;
 import com.guyazran.SimpleTime.OverflowClock;
 import com.guyazran.SimpleTime.Timer;
-import com.guyazran.salarypershift.HumanResources.WorkTimer;
+import com.guyazran.SalaryTracker.HumanResources.WorkTimer;
 
 public class TimerListAdapter extends RecyclerView.Adapter<TimerListAdapter.ViewHolder>{
 
@@ -49,6 +50,9 @@ public class TimerListAdapter extends RecyclerView.Adapter<TimerListAdapter.View
                     int position = getAdapterPosition();
                     timers.remove(position);
                     notifyItemRemoved(position);
+                    if (timers.size() == 0){
+                        context.unregisterReceiver(timeUpdateReceiver);
+                    }
                 }
             });
 
@@ -76,8 +80,11 @@ public class TimerListAdapter extends RecyclerView.Adapter<TimerListAdapter.View
     SharedPreferences sharedPreferences;
     Context context;
 
-    public TimerListAdapter(ArrayList<Timer> timers, Context context){
+    BroadcastReceiver timeUpdateReceiver;
+
+    public TimerListAdapter(ArrayList<Timer> timers, BroadcastReceiver timeUpdateReceiver,Context context){
         this.timers = timers;
+        this.timeUpdateReceiver = timeUpdateReceiver;
         this.context = context;
         sharedPreferences = context.getSharedPreferences(SettingsActivity.APP_PREFERENCES, Context.MODE_PRIVATE);
     }
@@ -94,8 +101,8 @@ public class TimerListAdapter extends RecyclerView.Adapter<TimerListAdapter.View
     public void onBindViewHolder(ViewHolder holder, final int position) {
         WorkTimer workTimer = (WorkTimer) timers.get(position);
         holder.lblWorkerName.setText(workTimer.getEmployee().getFirstName() + " " + workTimer.getEmployee().getLastName());
-
-        if (workTimer.getState() == TimerState.RUNNING) {
+        holder.btnStopTimer.setText(workTimer.getState() == TimerState.RUNNING ? context.getString(R.string.stop_button) : context.getString(R.string.still_in_shift_button));
+        holder.timerStateIndicator.setBackgroundColor(workTimer.getState() == TimerState.RUNNING ? Color.GREEN : Color.RED);
 
             //get overall time worked
             OverflowClock overallTimeWorked = TimeMath.addTimes(workTimer.getTimePassed(), workTimer.getOvertimePassed());
@@ -109,7 +116,6 @@ public class TimerListAdapter extends RecyclerView.Adapter<TimerListAdapter.View
             workTimer.getSalary().setTimeWorked(workTimer.getTimePassed());
             workTimer.getSalary().setOvertimeWorked(workTimer.getOvertimePassed());
             holder.lblFinalSalary.setText(workTimer.getSalary().getFinalPay().toString());
-        }
 
     }
 

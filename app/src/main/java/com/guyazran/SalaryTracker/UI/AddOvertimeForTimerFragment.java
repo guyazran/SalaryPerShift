@@ -1,4 +1,4 @@
-package com.guyazran.salarypershift.UI;
+package com.guyazran.SalaryTracker.UI;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -16,7 +16,7 @@ import android.widget.TextView;
 import com.guyazran.Finance.Currency;
 import com.guyazran.Finance.Money;
 import com.guyazran.SimpleTime.Clock;
-import com.guyazran.salarypershift.R;
+import com.guyazran.SalaryTracker.R;
 
 /**
  * Created by guyazran on 11/15/15.

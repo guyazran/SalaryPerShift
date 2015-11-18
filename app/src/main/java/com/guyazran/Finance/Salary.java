@@ -1,6 +1,7 @@
 package com.guyazran.Finance;
 
 import com.guyazran.SimpleTime.Clock;
+import com.guyazran.SimpleTime.OverflowClock;
 
 /**
  * Created by guyazran on 11/4/15.
@@ -8,10 +9,10 @@ import com.guyazran.SimpleTime.Clock;
  */
 public class Salary {
     private Money payRate, overtimePayRate, finalPay;
-    private Clock timeWorked, overtimeWorked;
+    private OverflowClock timeWorked, overtimeWorked;
     private boolean finalPayCreated;
 
-    public Salary(Money payRate, Clock timeWorked, Money overtimePayRate, Clock overtimeWorked) {
+    public Salary(Money payRate, OverflowClock timeWorked, Money overtimePayRate, OverflowClock overtimeWorked) {
         this.payRate = payRate;
         this.timeWorked = timeWorked;
         this.overtimePayRate = overtimePayRate;
@@ -25,6 +26,7 @@ public class Salary {
 
     public void setPayRate(Money payRate) {
         this.payRate = payRate;
+        this.finalPayCreated = false;
     }
 
     public Money getOvertimePayRate() {
@@ -33,22 +35,25 @@ public class Salary {
 
     public void setOvertimePayRate(Money overtimePayRate) {
         this.overtimePayRate = overtimePayRate;
+        this.finalPayCreated = false;
     }
 
-    public Clock getTimeWorked() {
+    public OverflowClock getTimeWorked() {
         return timeWorked;
     }
 
-    public void setTimeWorked(Clock timeWorked) {
+    public void setTimeWorked(OverflowClock timeWorked) {
         this.timeWorked = timeWorked;
+        this.finalPayCreated = false;
     }
 
     public Clock getOvertimeWorked() {
         return overtimeWorked;
     }
 
-    public void setOvertimeWorked(Clock overtimeWorked) {
+    public void setOvertimeWorked(OverflowClock overtimeWorked) {
         this.overtimeWorked = overtimeWorked;
+        this.finalPayCreated = false;
     }
 
     public Money getFinalPay(){

@@ -1,4 +1,4 @@
-package com.guyazran.salarypershift.UI;
+package com.guyazran.SalaryTracker.UI;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -19,7 +19,8 @@ import android.view.WindowManager;
 
 import com.guyazran.Finance.Money;
 
-import com.guyazran.salarypershift.R;
+import com.guyazran.SimpleTime.OverflowClock;
+import com.guyazran.SalaryTracker.R;
 import com.guyazran.SimpleTime.Clock;
 
 public class CalculateSalaryActivity extends AppCompatActivity implements SimpleCalculateSalaryFragment.OnFragmentInteractionListener, AddOvertimeFragment.OnChangeMadeListener {
@@ -105,7 +106,6 @@ public class CalculateSalaryActivity extends AppCompatActivity implements Simple
 
         //start the app with the keyboard hidden
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
-
     }
 
     private void setTabLayouts(TabLayout tabLayout, int[] resources){
@@ -149,11 +149,11 @@ public class CalculateSalaryActivity extends AppCompatActivity implements Simple
     }
 
     @Override
-    public Clock OnCalculateSalaryWithOvertimeGetTime() {
+    public OverflowClock OnCalculateSalaryWithOvertimeGetTime() {
         FragmentManager manager = getSupportFragmentManager();
         AddOvertimeFragment addOvertimeFragment = (AddOvertimeFragment) manager.findFragmentByTag(SimpleCalculateSalaryFragment.ADD_OVERTIME_FRAGMENT);
         if (addOvertimeFragment != null) {
-            return addOvertimeFragment.getOverTimeWorked();
+            return new OverflowClock(addOvertimeFragment.getOverTimeWorked());
         }
         return null;
     }
@@ -208,6 +208,18 @@ public class CalculateSalaryActivity extends AppCompatActivity implements Simple
             SimpleCalculateSalaryFragment simpleCalculateSalaryFragment = (SimpleCalculateSalaryFragment) f;
             if (simpleCalculateSalaryFragment != null) {
                 return simpleCalculateSalaryFragment.getOverallTime();
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public Clock onGetRegularEndTimeForOvertimeStartTime() {
+        Fragment f = getSupportFragmentManager().findFragmentByTag("android:switcher:" + R.id.container + ":" + mViewPager.getCurrentItem());
+        if (f instanceof  SimpleCalculateSalaryFragment) {
+            SimpleCalculateSalaryFragment simpleCalculateSalaryFragment = (SimpleCalculateSalaryFragment) f;
+            if (simpleCalculateSalaryFragment != null) {
+                return simpleCalculateSalaryFragment.getStartTime();
             }
         }
         return null;

@@ -1,4 +1,4 @@
-package com.guyazran.salarypershift.UI;
+package com.guyazran.SalaryTracker.UI;
 
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
@@ -10,7 +10,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.guyazran.SimpleTime.Clock;
-import com.guyazran.salarypershift.R;
+import com.guyazran.SalaryTracker.R;
 
 /**
  * Created by guyazran on 11/15/15.

@@ -1,4 +1,4 @@
-package com.guyazran.salarypershift.UI;
+package com.guyazran.SalaryTracker.UI;
 
 import android.app.Dialog;
 import android.app.DialogFragment;

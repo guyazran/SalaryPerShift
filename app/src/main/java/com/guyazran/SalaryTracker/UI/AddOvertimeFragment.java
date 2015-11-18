@@ -1,4 +1,4 @@
-package com.guyazran.salarypershift.UI;
+package com.guyazran.SalaryTracker.UI;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -15,9 +15,12 @@ import android.widget.TextView;
 import com.guyazran.Finance.Currency;
 import com.guyazran.Finance.Money;
 
-import com.guyazran.salarypershift.R;
+import com.guyazran.SimpleTime.OverflowClock;
+import com.guyazran.SalaryTracker.R;
 import com.guyazran.SimpleTime.Clock;
 import com.guyazran.SimpleTime.TimeMath;
+
+import java.text.DecimalFormat;
 
 
 /**
@@ -71,7 +74,7 @@ public class AddOvertimeFragment extends Fragment {
         txtOvertimeSalary.setOnKeyListener(new View.OnKeyListener() {
             @Override
             public boolean onKey(View v, int keyCode, KeyEvent event) {
-                if (keyCode == KeyEvent.KEYCODE_ENTER){
+                if (keyCode == KeyEvent.KEYCODE_ENTER) {
                     mListener.onEnterPressed();
                 }
                 return false;
@@ -83,7 +86,7 @@ public class AddOvertimeFragment extends Fragment {
 
         //get currency from settings
         int currencyInt = sharedPreferences.getInt(SettingsActivity.PREFERRED_CURRENCY, 0);
-        switch (currencyInt){
+        switch (currencyInt) {
             case 0:
                 currency = Currency.USD;
                 break;
@@ -106,18 +109,33 @@ public class AddOvertimeFragment extends Fragment {
 
     public void btnChooseStartTime(View view) {
         TimePickerFragment newFragment = new TimePickerFragment();
-        if (startTime == null){
-            startTime = new Clock();
+        int startHour, startMinutes;
+        if (startTime == null) {
+            Clock regularStartTime = mListener.onGetRegularEndTimeForOvertimeStartTime();
+            if (regularStartTime != null){
+                startHour = regularStartTime.getHour();
+                startMinutes = regularStartTime.getMinutes();
+            } else {
+                startHour = 0;
+                startMinutes = 0;
+            }
+        } else {
+            startHour = startTime.getHour();
+            startMinutes = startTime.getMinutes();
         }
-        newFragment.setFragment(startTime.getHour(), startTime.getMinutes(), new TimePickerFragment.onTimeChosenListener() {
+        newFragment.setFragment(startHour, startMinutes, new TimePickerFragment.onTimeChosenListener() {
             @Override
             public void setTime(int hour, int minute) {
-                startTime.setHour(hour);
-                startTime.setMinutes(minute);
+                if (startTime != null) {
+                    startTime.setHour(hour);
+                    startTime.setMinutes(minute);
+                } else {
+                    startTime = new Clock(hour, minute);
+                }
                 lblStartOvertime.setText(startTime.toString());
                 mListener.onTimeChanged();
 
-                if (endTime != null){
+                if (endTime != null) {
                     showOvertimeWorked();
                 }
                 setOverallTimeWorked();
@@ -127,19 +145,28 @@ public class AddOvertimeFragment extends Fragment {
     }
 
     public void btnChooseEndTime(View view) {
-        if (endTime == null){
-            endTime = new Clock();
+        int startHour, startMinutes;
+        if (endTime == null) {
+            startHour = 0;
+            startMinutes = 0;
+        } else {
+            startHour = endTime.getHour();
+            startMinutes = endTime.getMinutes();
         }
         TimePickerFragment newFragment = new TimePickerFragment();
-        newFragment.setFragment(endTime.getHour(), endTime.getMinutes(), new TimePickerFragment.onTimeChosenListener() {
+        newFragment.setFragment(startHour, startMinutes, new TimePickerFragment.onTimeChosenListener() {
             @Override
             public void setTime(int hour, int minute) {
-                endTime.setHour(hour);
-                endTime.setMinutes(minute);
+                if(endTime != null) {
+                    endTime.setHour(hour);
+                    endTime.setMinutes(minute);
+                } else {
+                    endTime = new Clock(hour, minute);
+                }
                 lblEndOvertime.setText(endTime.toString());
                 mListener.onTimeChanged();
 
-                if (startTime != null){
+                if (startTime != null) {
                     showOvertimeWorked();
                 }
                 setOverallTimeWorked();
@@ -148,40 +175,49 @@ public class AddOvertimeFragment extends Fragment {
         newFragment.show(getActivity().getFragmentManager(), "timePicker");
     }
 
-    private void showOvertimeWorked(){
-        lblOvertimeWorked.setText(getOverTimeWorked().toString());
+    private void showOvertimeWorked() {
+        if (sharedPreferences.getInt(SettingsActivity.PREFERRED_OVERALL_TIME_DISPLAY_FORMAT, 0) == 0) {
+            lblOvertimeWorked.setText(getOverTimeWorked().toString());
+        } else {
+            DecimalFormat df = new DecimalFormat("####0.00");
+            lblOvertimeWorked.setText(df.format(getOverTimeWorked().getDecimalValue()));
+        }
     }
 
-    public Clock getOverTimeWorked(){
+    public OverflowClock getOverTimeWorked() {
         if (startTime != null && endTime != null) {
-            return startTime.hourAndMinutesDifference(endTime);
+            return new OverflowClock(startTime.hourAndMinutesDifference(endTime));
         } else {
             return null;
         }
     }
 
-    public Money getOvertimeSalary() throws Exception{
+    public Money getOvertimeSalary() throws Exception {
         String salaryString = txtOvertimeSalary.getText().toString();
         double salary;
         salary = Double.valueOf(salaryString);
         return new Money(salary, currency);
     }
 
-    public void setRegularTimeWorked(Clock regularTimeWorked){
+    public void setRegularTimeWorked(Clock regularTimeWorked) {
         this.regularTimeWorked = regularTimeWorked;
         setOverallTimeWorked();
     }
 
-    private void setOverallTimeWorked(){
+    private void setOverallTimeWorked() {
         if (regularTimeWorked != null && startTime != null && endTime != null) {
-            Clock overallTimeWorked = TimeMath.addTimes(regularTimeWorked ,startTime.hourAndMinutesDifference(endTime));
+            Clock overallTimeWorked = TimeMath.addTimes(regularTimeWorked, startTime.hourAndMinutesDifference(endTime));
             lblOverallTimeWorked.setText(overallTimeWorked.toString());
         }
     }
 
-    public interface OnChangeMadeListener{
+    public interface OnChangeMadeListener {
         void onTimeChanged();
+
         void onEnterPressed();
+
         Clock onGetRegularTimeOnFragmentCreation();
+
+        Clock onGetRegularEndTimeForOvertimeStartTime();
     }
 }

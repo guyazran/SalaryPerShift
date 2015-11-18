@@ -1,4 +1,4 @@
-package com.guyazran.salarypershift.UI;
+package com.guyazran.SalaryTracker.UI;
 
 import android.content.Context;
 import android.graphics.Canvas;
@@ -7,7 +7,7 @@ import android.os.Build;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
-import com.guyazran.salarypershift.R;
+import com.guyazran.SalaryTracker.R;
 
 public class DividerItemDecoration extends RecyclerView.ItemDecoration {
     private Drawable mDivider;

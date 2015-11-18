@@ -1,4 +1,4 @@
-package com.guyazran.salarypershift.HumanResources;
+package com.guyazran.SalaryTracker.HumanResources;
 
 /**
  * Created by guyazran on 11/14/15.

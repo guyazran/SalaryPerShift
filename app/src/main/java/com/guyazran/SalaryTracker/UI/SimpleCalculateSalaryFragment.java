@@ -1,4 +1,4 @@
-package com.guyazran.salarypershift.UI;
+package com.guyazran.SalaryTracker.UI;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -24,7 +24,7 @@ import com.guyazran.Finance.Currency;
 import com.guyazran.Finance.Money;
 import com.guyazran.Finance.Salary;
 
-import com.guyazran.salarypershift.R;
+import com.guyazran.SalaryTracker.R;
 import com.guyazran.SimpleTime.Clock;
 import com.guyazran.SimpleTime.OverflowClock;
 
@@ -60,7 +60,7 @@ public class SimpleCalculateSalaryFragment extends Fragment {
         txtSalary.setOnKeyListener(new View.OnKeyListener() {
             @Override
             public boolean onKey(View v, int keyCode, KeyEvent event) {
-                if (keyCode == KeyEvent.KEYCODE_ENTER){
+                if (keyCode == KeyEvent.KEYCODE_ENTER) {
                     btnCalculateSalary(btnCalculateSalary);
                 }
                 return false;
@@ -81,9 +81,9 @@ public class SimpleCalculateSalaryFragment extends Fragment {
 
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked){
+                if (isChecked) {
                     AddOvertimeFragment addOvertimeFragment = (AddOvertimeFragment) manager.findFragmentByTag(ADD_OVERTIME_FRAGMENT);
-                    if (addOvertimeFragment != null){
+                    if (addOvertimeFragment != null) {
                         FragmentTransaction attachOvertimeTransaction = manager.beginTransaction();
                         attachOvertimeTransaction.attach(addOvertimeFragment);
                         attachOvertimeTransaction.commit();
@@ -97,7 +97,7 @@ public class SimpleCalculateSalaryFragment extends Fragment {
                 } else {
                     AddOvertimeFragment addOvertimeFragment = (AddOvertimeFragment) manager.findFragmentByTag(ADD_OVERTIME_FRAGMENT);
                     FragmentTransaction removeOvertimeTransaction = manager.beginTransaction();
-                    if (addOvertimeFragment != null){
+                    if (addOvertimeFragment != null) {
                         removeOvertimeTransaction.detach(addOvertimeFragment);
                         removeOvertimeTransaction.commit();
                     }
@@ -150,18 +150,27 @@ public class SimpleCalculateSalaryFragment extends Fragment {
 
     public void btnChooseStartTime(View view) {
         TimePickerFragment newFragment = new TimePickerFragment();
+        int startHour, startMinutes;
         if (startTime == null){
-            startTime = new Clock();
+            startHour = 0;
+            startMinutes = 0;
+        } else {
+            startHour = startTime.getHour();
+            startMinutes = startTime.getMinutes();
         }
-        newFragment.setFragment(startTime.getHour(), startTime.getMinutes(), new TimePickerFragment.onTimeChosenListener() {
+        newFragment.setFragment(startHour, startMinutes, new TimePickerFragment.onTimeChosenListener() {
             @Override
             public void setTime(int hour, int minute) {
-                startTime.setHour(hour);
-                startTime.setMinutes(minute);
+                if (startTime != null) {
+                    startTime.setHour(hour);
+                    startTime.setMinutes(minute);
+                } else {
+                    startTime = new Clock(hour, minute);
+                }
                 lblStartTime.setText(startTime.toString());
                 clearSalary();
 
-                if (endTime != null){
+                if (endTime != null) {
                     showHoursWorked();
                 }
             }
@@ -170,15 +179,24 @@ public class SimpleCalculateSalaryFragment extends Fragment {
     }
 
     public void btnChooseEndTime(View view) {
+        int startHour, startMinutes;
         if (endTime == null){
-            endTime = new Clock();
+            startHour = 0;
+            startMinutes = 0;
+        } else {
+            startHour = endTime.getHour();
+            startMinutes = endTime.getMinutes();
         }
         TimePickerFragment newFragment = new TimePickerFragment();
-        newFragment.setFragment(endTime.getHour(), endTime.getMinutes(), new TimePickerFragment.onTimeChosenListener() {
+        newFragment.setFragment(startHour, startMinutes, new TimePickerFragment.onTimeChosenListener() {
             @Override
             public void setTime(int hour, int minute) {
-                endTime.setHour(hour);
-                endTime.setMinutes(minute);
+                if(endTime != null) {
+                    endTime.setHour(hour);
+                    endTime.setMinutes(minute);
+                } else {
+                    endTime = new Clock(hour, minute);
+                }
                 lblEndTime.setText(endTime.toString());
                 clearSalary();
 
@@ -190,7 +208,7 @@ public class SimpleCalculateSalaryFragment extends Fragment {
         newFragment.show(getActivity().getFragmentManager(), "timePicker");
     }
 
-    private void showHoursWorked(){
+    private void showHoursWorked() {
         OverflowClock timeWorked = getOverallTime();
 
         if (sharedPreferences.getInt(SettingsActivity.PREFERRED_OVERALL_TIME_DISPLAY_FORMAT, 0) == 0) {
@@ -202,7 +220,11 @@ public class SimpleCalculateSalaryFragment extends Fragment {
         mListener.onRegularTimeChanged(timeWorked);
     }
 
-    protected OverflowClock getOverallTime(){
+    protected Clock getStartTime(){
+        return startTime;
+    }
+
+    protected OverflowClock getOverallTime() {
         if (startTime != null & endTime != null) {
 
             OverflowClock overallTime = new OverflowClock(startTime.hourAndMinutesDifference(endTime));
@@ -212,7 +234,7 @@ public class SimpleCalculateSalaryFragment extends Fragment {
         return null;
     }
 
-    public void clearSalary(){
+    public void clearSalary() {
         if (lblSalary != null) {
             lblSalary.setText("");
         }
@@ -224,7 +246,7 @@ public class SimpleCalculateSalaryFragment extends Fragment {
             return;
         }
 
-        Clock timeWorked = startTime.hourAndMinutesDifference(endTime);
+        OverflowClock timeWorked = new OverflowClock(startTime.hourAndMinutesDifference(endTime));
         double salaryPerHour;
         try {
             salaryPerHour = getSalaryPerHour();
@@ -233,23 +255,21 @@ public class SimpleCalculateSalaryFragment extends Fragment {
             return;
         }
 
-        Clock overtimeWorked = null;
+        OverflowClock overtimeWorked = null;
         Money overtimeSalary = null;
-        if (mListener != null) {
+        if (mListener != null && chkAddOvertime.isChecked()) {
             overtimeWorked = mListener.OnCalculateSalaryWithOvertimeGetTime();
             overtimeSalary = mListener.OnCalculateSalaryWithOvertimeGetSalary();
-            if (chkAddOvertime.isChecked() == true){
-                if (overtimeWorked == null){
-                    Toast.makeText(getActivity(), R.string.enter_overtime_start_and_end_hour, Toast.LENGTH_LONG).show();
-                    return;
-                }
-                if (overtimeSalary == null){
-                    Toast.makeText(getActivity(), R.string.invalid_overtime_salary_input_toast, Toast.LENGTH_LONG).show();
-                }
+            if (overtimeWorked == null) {
+                Toast.makeText(getActivity(), R.string.enter_overtime_start_and_end_hour, Toast.LENGTH_LONG).show();
+                return;
+            }
+            if (overtimeSalary == null) {
+                Toast.makeText(getActivity(), R.string.invalid_overtime_salary_input_toast, Toast.LENGTH_LONG).show();
             }
         }
 
-        InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+        InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
 
         Salary salary = new Salary(new Money(salaryPerHour, Currency.ILS), timeWorked, overtimeSalary, overtimeWorked);
@@ -257,7 +277,7 @@ public class SimpleCalculateSalaryFragment extends Fragment {
         lblSalary.setText(salary.getFinalPay().toString());
     }
 
-    private double getSalaryPerHour(){
+    private double getSalaryPerHour() {
         String salaryString = txtSalary.getText().toString();
         double salary;
         salary = Double.valueOf(salaryString);
@@ -265,8 +285,10 @@ public class SimpleCalculateSalaryFragment extends Fragment {
     }
 
     public interface OnFragmentInteractionListener {
-        Clock OnCalculateSalaryWithOvertimeGetTime();
+        OverflowClock OnCalculateSalaryWithOvertimeGetTime();
+
         Money OnCalculateSalaryWithOvertimeGetSalary();
+
         void onRegularTimeChanged(Clock timeWorked);
     }
 

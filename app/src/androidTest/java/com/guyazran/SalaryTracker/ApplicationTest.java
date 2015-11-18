@@ -1,4 +1,4 @@
-package com.example.guyazran.salarypershift;
+package com.guyazran.SalaryTracker;
 
 import android.app.Application;
 import android.test.ApplicationTestCase;
