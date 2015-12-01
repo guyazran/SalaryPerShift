@@ -7,8 +7,8 @@ android {
         applicationId 'com.guyazran.SalaryTracker'
         minSdkVersion 19
         targetSdkVersion 23
-        versionCode 8
-        versionName "2.1.4"
+        versionCode 10
+        versionName "2.1.6"
     }
     buildTypes {
         release {

@@ -48,10 +48,16 @@ public class TimerListAdapter extends RecyclerView.Adapter<TimerListAdapter.View
                 @Override
                 public void onClick(View v) {
                     int position = getAdapterPosition();
-                    timers.remove(position);
-                    notifyItemRemoved(position);
+                    if (position < timers.size() && position >= 0) {
+                        timers.remove(position);
+                        notifyItemRemoved(position);
+                    }
                     if (timers.size() == 0){
-                        context.unregisterReceiver(timeUpdateReceiver);
+                        try {
+                            context.unregisterReceiver(timeUpdateReceiver);
+                        }catch(Error e){
+                            e.printStackTrace();
+                        }
                     }
                 }
             });
